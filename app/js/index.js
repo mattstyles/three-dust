@@ -7,6 +7,9 @@ define( function( require ) {
     var Emitter = require( 'particles/emitter' ),
         Particle = require( 'particles/particle' ),
         CopyShader = require( 'vendor/CopyShader' ),
+        HBlurShader = require( 'vendor/HorizontalBlurShader' ),
+        VBlurShader = require( 'vendor/VerticalBlurShader' ),
+        DotScreenShader = require( 'vendor/DotScreenShader' ),
         MaskPass = require( 'vendor/MaskPass' ),
         ShaderPass = require( 'vendor/ShaderPass' ),
         RenderPass = require( 'vendor/RenderPass' ),
@@ -114,6 +117,17 @@ define( function( require ) {
         // Add effects composer for post processing
         composer = new THREE.EffectComposer( renderer );
         composer.addPass( new THREE.RenderPass( scene, camera ) );
+
+        var hblur = new THREE.ShaderPass( THREE.HorizontalBlurShader );
+        var vblur = new THREE.ShaderPass( THREE.VerticalBlurShader);
+        hblur.uniforms.h.value =  1 / window.innerWidth;
+		vblur.uniforms.v.value =  1 / window.innerHeight;
+		composer.addPass( hblur );
+		composer.addPass( vblur );
+
+        var dotScreenEffect = new THREE.ShaderPass( THREE.DotScreenShader );
+        dotScreenEffect.uniforms.scale.value = 4;
+//        composer.addPass( dotScreenEffect );
 
         var copy = new THREE.ShaderPass( THREE.CopyShader );
         copy.renderToScreen = true;
