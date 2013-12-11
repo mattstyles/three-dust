@@ -4,7 +4,8 @@
 // creates a particle system and makes it go
 define( function( require ) {
 
-    var Emitter = require( 'particles/emitter' );
+    var Emitter = require( 'particles/emitter' ),
+        Particle = require( 'particles/particle' );
 
     // Add Stats
     var stats = new Stats();
@@ -15,7 +16,7 @@ define( function( require ) {
     document.body.appendChild( stats.domElement );
 
     // constants
-    var NUM_PARTICLES = 2000,
+    var NUM_PARTICLES = 200,
         CAM_MAX_SPEED = 10,
         CAM_ACCEL = 2,
         CAM_INERTIA = 0.1;
@@ -38,10 +39,10 @@ define( function( require ) {
         scene = new THREE.Scene();
 
         // particle extension functions
-        var pExt = {
+        var pExt = window.pExt = {
             initialExtensions: {
                 age: function() {
-                    this.maxLife = Math.random() * 40 + 30;
+                    this.maxLife = Math.random() * 60 + 60;
                 }
             },
             updateExtensions: {
@@ -59,17 +60,17 @@ define( function( require ) {
             },
             resetExtensions: {
                 position: function() {
-                    this.position.x = Math.random() * 0.5 - 0.25;
-                    this.position.y = Math.random() * 0.5 - 0.25;
+                    this.position.x = Math.random() * 1.5 - 0.75;
+                    this.position.y = Math.random() * 1.5 - 0.75;
                     this.position.z = 0;
                 },
                 velocity: function() {
                     this.velocity.x = ( Math.random() * 2 ) - 1;
                     this.velocity.y = ( Math.random() * 2 ) - 1;
-                    this.velocity.z = Math.random() * 5 + 5;
+                    this.velocity.z = 0;
                 },
                 scale: function() {
-                    this.scale = Math.random() * 1 + 1;
+                    this.scale = Math.random() * 10 + 150;
                 },
                 color: function() {
                     this.color.r = 0;
@@ -84,12 +85,16 @@ define( function( require ) {
             position: new THREE.Vector3( 0, 0, 0 ),
             forces: new THREE.Vector3( 0, 0, 0 ),
             maxParticles: NUM_PARTICLES,
+            particle: Particle,
             extendParticle: pExt
         } );
         scene.add( ps.system );
 
-        renderer = new THREE.WebGLRenderer();
+        renderer = window.renderer = new THREE.WebGLRenderer( {
+            alpha: true
+        } );
         renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.setClearColor( 0x000000, 0 );
 
         document.body.appendChild( renderer.domElement );
 
@@ -100,7 +105,10 @@ define( function( require ) {
     function render() {
 
         // render particle system
-        ps.render();
+        if ( ps ) {
+            ps.render();
+        }
+
 
         // update camera
         camera.position.add( camera.velocity );
@@ -136,6 +144,19 @@ define( function( require ) {
                 if ( camera.velocity.z < CAM_MAX_SPEED ) {
                     camera.velocity.z += CAM_ACCEL;
                 }
+            }
+
+            // space
+            if ( event.keyCode === 32 ) {
+                scene.remove( ps.system );
+                ps = window.ps = new Emitter( {
+                    position: new THREE.Vector3( Math.random() * 300 - 150, Math.random() * 300 - 150, 0 ),
+                    forces: new THREE.Vector3( Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1, 0 ),
+                    maxParticles: NUM_PARTICLES,
+                    particle: Particle,
+                    extendParticle: window.pExt
+                } );
+                scene.add( ps.system );
             }
         }, true );
 
