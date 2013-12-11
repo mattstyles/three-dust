@@ -15,7 +15,7 @@ define( function( require ) {
     document.body.appendChild( stats.domElement );
 
     // constants
-    var NUM_PARTICLES = 20,
+    var NUM_PARTICLES = 2000,
         CAM_MAX_SPEED = 10,
         CAM_ACCEL = 2,
         CAM_INERTIA = 0.1;
@@ -31,10 +31,9 @@ define( function( require ) {
     // Set stuff up, innit?
     function init() {
 
-        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
+        camera = window.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 10, 1000 );
         camera.position.z = 500;
         camera.velocity = new THREE.Vector3( 0,0,0 );
-        window.camera = camera;
 
         scene = new THREE.Scene();
 
@@ -42,7 +41,7 @@ define( function( require ) {
         var pExt = {
             initialExtensions: {
                 age: function() {
-                    this.maxLife = Math.random() * 50 + 10;
+                    this.maxLife = Math.random() * 40 + 30;
                 }
             },
             updateExtensions: {
@@ -50,30 +49,30 @@ define( function( require ) {
                     this.position.add( this.velocity );
                 },
                 scale: function() {
-                    this.scale *= 0.97;      // This should actually work out a range based on age
+                    this.scale *= 0.99;
                 },
                 color: function() {
-                    this.color.r = 1;
-                    this.color.g = 1 - this.age;
+                    this.color.r = this.age;
+                    this.color.g = 1;
                     this.color.b = 0;
                 }
             },
             resetExtensions: {
                 position: function() {
-                    this.position.x = Math.random() * 5 - 2.5;
-                    this.position.y = Math.random() * 20 - 10;
-                    this.position.z = Math.random() * 20 - 10;
+                    this.position.x = Math.random() * 0.5 - 0.25;
+                    this.position.y = Math.random() * 0.5 - 0.25;
+                    this.position.z = 0;
                 },
                 velocity: function() {
-                    this.velocity.x = ( Math.random() * 1.5 ) - 0.75;
-                    this.velocity.y = ( Math.random() * 2 ) + 2;
-                    this.velocity.z = 0;
+                    this.velocity.x = ( Math.random() * 2 ) - 1;
+                    this.velocity.y = ( Math.random() * 2 ) - 1;
+                    this.velocity.z = Math.random() * 5 + 5;
                 },
                 scale: function() {
-                    this.scale = Math.random() * 20 + 20;
+                    this.scale = Math.random() * 1 + 1;
                 },
                 color: function() {
-                    this.color.r = 1;
+                    this.color.r = 0;
                     this.color.g = 1;
                     this.color.b = 0;
                 }
@@ -82,7 +81,7 @@ define( function( require ) {
 
         // create the particle emitter and add it to the scene
         ps = window.ps = new Emitter( {
-            position: new THREE.Vector3( 0, -100, 0 ),
+            position: new THREE.Vector3( 0, 0, 0 ),
             forces: new THREE.Vector3( 0, 0, 0 ),
             maxParticles: NUM_PARTICLES,
             extendParticle: pExt

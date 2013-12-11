@@ -4,30 +4,13 @@ define( function( require, exports, module ) {
 
     var Particle = require( 'particles/particle' );
 
-
+    // Creates a simple gradient circle
     function generateSprite() {
         var canvas = document.createElement( 'canvas' );
         canvas.width = 128;
         canvas.height = 128;
 
         var context = canvas.getContext( '2d' );
-
-        // Just a square, doesnt work too bad with blur pp.
-        // context.fillStyle = "white";
-        // context.strokeStyle = "white";
-        // context.fillRect(0, 0, 63, 63) ;
-
-        // Heart Shapes are not too pretty here
-        // var x = 4, y = 0;
-        // context.save();
-        // context.scale(8, 8); // Scale so canvas render can redraw within bounds
-        // context.beginPath();
-        // context.bezierCurveTo( x + 2.5, y + 2.5, x + 2.0, y, x, y );
-        // context.bezierCurveTo( x - 3.0, y, x - 3.0, y + 3.5,x - 3.0,y + 3.5 );
-        // context.bezierCurveTo( x - 3.0, y + 5.5, x - 1.0, y + 7.7, x + 2.5, y + 9.5 );
-        // context.bezierCurveTo( x + 6.0, y + 7.7, x + 8.0, y + 5.5, x + 8.0, y + 3.5 );
-        // context.bezierCurveTo( x + 8.0, y + 3.5, x + 8.0, y, x + 5.0, y );
-        // context.bezierCurveTo( x + 3.5, y, x + 2.5, y + 2.5, x + 2.5, y + 2.5 );
 
         context.beginPath();
         context.arc( 64, 64, 60, 0, Math.PI * 2, false) ;
@@ -102,8 +85,8 @@ define( function( require, exports, module ) {
             transparent: true
         });
 
-        var valueSize = attributes.size.value;
-        var valueColor = attributes.pcolor.value;
+        var valueSize = this.attributes.size.value;
+        var valueColor = this.attributes.pcolor.value;
 
         for( var i = 0; i < this.maxParticles; i++ ) {
             p = new this.particle( this.extendParticle );
@@ -113,14 +96,13 @@ define( function( require, exports, module ) {
 
             this.particles[ i ] = p;
 
-            this.attributes.size.value[ i ] = this.particles[ i ].scale || 10;
+            valueSize[ i ] = this.particles[ i ].scale || 10;
             valueColor[ i ] = this.particles[ i ].color || new THREE.Color( 0xFFFFFF);
         }
 
         this.system = new THREE.ParticleSystem( this.geometry, shaderMaterial );
         this.system.position = this.position;
         this.system.sortParticles = true;
-//        this.system.dynamic = true;
     };
 
     // Renders all those particles
@@ -128,16 +110,14 @@ define( function( require, exports, module ) {
         var self = this;
 
         this.particles.forEach( function( particle, i ) {
-//            self.geometry.colors[ i ].g -= 0.01;                // see notes about colors
             particle.update();
             particle.applyForces( self.forces );
 
             self.attributes.size.value[ i ] = self.particles[ i ].scale;
+            self.attributes.pcolor.value[ i ] = self.particles[ i ].color;      // This isnt actually necessary
         });
 
-//        self.geometry.__dirtyVertices = true;
         this.system.geometry.verticesNeedUpdate = true;
-
         this.attributes.size.needsUpdate = true;
         this.attributes.pcolor.needsUpdate = true;
     };
