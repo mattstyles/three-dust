@@ -6,3 +6,7 @@ This project looks to port pixi-dust over to threejs to see what differences hav
 So it looks like threejs is quite a bit faster, and, crucially, looks more extensible in terms of using shaders to access the different particles (particularly the vertex shader).  At the moment it is a little hard to tell because the chunky bit in pixi was raising a filter for each element but that constraint should be able to be removed by creating shaders that reference the age of the particle.
 
 Using colors by using the vertexColors:true flag in the particle system geometry array does work but its a little strange to have the particles fairly self constrained but then their colour being dictated by a color array which is outside of their control.  There is a little hit on rendering performance here too.  Offload to the shaders should be the next move.
+
+Now using shaders to handle size and colour.
+
+Now handles alpha, perf still ok.  Can handle about 12k at around 60fps without too much trouble (non-optimised).

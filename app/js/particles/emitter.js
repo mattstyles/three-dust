@@ -61,13 +61,13 @@ define( function( require, exports, module ) {
         var p;
 
         // Create material for shader
-        var sprite = generateSprite();
-        var texture = new THREE.Texture( sprite );
+        var texture = new THREE.Texture( generateSprite() );
         texture.needsUpdate = true;
 
         this.attributes = window.attributes = {
             size:  { type: 'f', value: [] },
-            pcolor: { type: 'c', value: [] }
+            pcolor: { type: 'c', value: [] },
+            alpha: { type: 'f', value: [] }
         };
 
         this.uniforms = {
@@ -88,6 +88,7 @@ define( function( require, exports, module ) {
 
         var valueSize = this.attributes.size.value;
         var valueColor = this.attributes.pcolor.value;
+        var valueAlpha = this.attributes.alpha.value;
 
         for( var i = 0; i < this.maxParticles; i++ ) {
             p = new this.particle( this.extendParticle );
@@ -99,6 +100,7 @@ define( function( require, exports, module ) {
 
             valueSize[ i ] = this.particles[ i ].scale || 10;
             valueColor[ i ] = this.particles[ i ].color || new THREE.Color( 0xFFFFFF);
+            valueAlpha[ i ] = this.particles[ i ].alpha || 1.0;
         }
 
         this.system = new THREE.ParticleSystem( this.geometry, shaderMaterial );
@@ -115,6 +117,7 @@ define( function( require, exports, module ) {
             particle.applyForces( self.forces );
 
             self.attributes.size.value[ i ] = self.particles[ i ].scale;
+            self.attributes.alpha.value[ i ] = self.particles[ i ].alpha;
             self.attributes.pcolor.value[ i ] = self.particles[ i ].color;      // This isnt actually necessary
         });
 

@@ -33,6 +33,7 @@ define( function( require, exports, module ) {
         this.velocity = new THREE.Vector3( 0, 0, 0 );
         this.scale = 10;
         this.color = new THREE.Color( 0xFFFFFF );
+        this.alpha = 1.0;
 
         this.initialExtensions = new Extension( extend.initialExtensions );
         this.updateExtensions = new Extension( extend.updateExtensions );

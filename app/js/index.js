@@ -16,7 +16,7 @@ define( function( require ) {
     document.body.appendChild( stats.domElement );
 
     // constants
-    var NUM_PARTICLES = 200,
+    var NUM_PARTICLES = 1000,
         CAM_MAX_SPEED = 10,
         CAM_ACCEL = 2,
         CAM_INERTIA = 0.1;
@@ -33,7 +33,7 @@ define( function( require ) {
     function init() {
 
         camera = window.camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 10, 1000 );
-        camera.position.z = 500;
+        camera.position.z = 100;
         camera.velocity = new THREE.Vector3( 0,0,0 );
 
         scene = new THREE.Scene();
@@ -43,6 +43,9 @@ define( function( require ) {
             initialExtensions: {
                 age: function() {
                     this.maxLife = Math.random() * 60 + 60;
+                },
+                alpha: function() {
+                    this.alpha = 1;
                 }
             },
             updateExtensions: {
@@ -56,6 +59,9 @@ define( function( require ) {
                     this.color.r = this.age;
                     this.color.g = 1;
                     this.color.b = 0;
+                },
+                alpha: function() {
+                    this.alpha = 1 - this.age;
                 }
             },
             resetExtensions: {
@@ -70,12 +76,15 @@ define( function( require ) {
                     this.velocity.z = 0;
                 },
                 scale: function() {
-                    this.scale = Math.random() * 10 + 150;
+                    this.scale = Math.random() * 50 + 100;
                 },
                 color: function() {
                     this.color.r = 0;
                     this.color.g = 1;
                     this.color.b = 0;
+                },
+                alpha: function() {
+                    this.alpha = 1;
                 }
             }
         };

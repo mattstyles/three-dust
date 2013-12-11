@@ -18,14 +18,15 @@
 
 				attribute float size;
 				attribute vec3 pcolor;
+				attribute float alpha;
 
-				varying vec3 vColor;
+				varying vec4 vColor;
 
 				void main() {
-					vColor = pcolor;
+					vColor = vec4( pcolor, alpha );
 					vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 
-					gl_PointSize = size * ( 200.0 / length( mvPosition.xyz ) );
+					gl_PointSize = size * ( 100.0 / length( mvPosition.xyz ) );
 					gl_Position = projectionMatrix * mvPosition;
 				}
 
@@ -35,12 +36,12 @@
 
 				uniform sampler2D texture;
 
-				varying vec3 vColor;
+				varying vec4 vColor;
 
 				void main() {
 					vec4 outColor = texture2D( texture, gl_PointCoord );
 
-					gl_FragColor = outColor * vec4( vColor, 1.0 );
+					gl_FragColor = outColor * vColor;
 				}
 
 			</script>
