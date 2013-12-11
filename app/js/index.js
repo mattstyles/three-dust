@@ -5,7 +5,12 @@
 define( function( require ) {
 
     var Emitter = require( 'particles/emitter' ),
-        Particle = require( 'particles/particle' );
+        Particle = require( 'particles/particle' ),
+        CopyShader = require( 'vendor/CopyShader' ),
+        MaskPass = require( 'vendor/MaskPass' ),
+        ShaderPass = require( 'vendor/ShaderPass' ),
+        RenderPass = require( 'vendor/RenderPass' ),
+        Composer = require( 'vendor/EffectComposer' );
 
     // Add Stats
     var stats = new Stats();
@@ -22,7 +27,7 @@ define( function( require ) {
         CAM_INERTIA = 0.1;
 
     // stuff - kind of global
-    var camera, scene, renderer;
+    var camera, scene, renderer, composer;
     var ps;
 
     // Fire into it
@@ -99,11 +104,20 @@ define( function( require ) {
         } );
         scene.add( ps.system );
 
+        // Create renderer
         renderer = window.renderer = new THREE.WebGLRenderer( {
             alpha: true
         } );
         renderer.setSize( window.innerWidth, window.innerHeight );
         renderer.setClearColor( 0x000000, 0 );
+
+        // Add effects composer for post processing
+        composer = new THREE.EffectComposer( renderer );
+        composer.addPass( new THREE.RenderPass( scene, camera ) );
+
+        var copy = new THREE.ShaderPass( THREE.CopyShader );
+        copy.renderToScreen = true;
+        composer.addPass( copy );
 
         document.body.appendChild( renderer.domElement );
 
@@ -128,7 +142,8 @@ define( function( require ) {
         }
 
         // render the scene using the camera
-        renderer.render(scene, camera);
+//        renderer.render(scene, camera);
+        composer.render();
 
         // note: three.js includes requestAnimationFrame shim
         requestAnimationFrame( render );
