@@ -15,7 +15,7 @@ define( function( require ) {
     document.body.appendChild( stats.domElement );
 
     // constants
-    var NUM_PARTICLES = 2000,
+    var NUM_PARTICLES = 20,
         CAM_MAX_SPEED = 10,
         CAM_ACCEL = 2,
         CAM_INERTIA = 0.1;
@@ -50,8 +50,12 @@ define( function( require ) {
                     this.position.add( this.velocity );
                 },
                 scale: function() {
-                    // NOTE: size and color should be offloaded to the GPU
-//                    this.scale.multiplyScalar( 1.5 );
+                    this.scale *= 0.97;      // This should actually work out a range based on age
+                },
+                color: function() {
+                    this.color.r = 1;
+                    this.color.g = 1 - this.age;
+                    this.color.b = 0;
                 }
             },
             resetExtensions: {
@@ -62,18 +66,23 @@ define( function( require ) {
                 },
                 velocity: function() {
                     this.velocity.x = ( Math.random() * 1.5 ) - 0.75;
-                    this.velocity.y = ( Math.random() * 4 ) + 2;
+                    this.velocity.y = ( Math.random() * 2 ) + 2;
                     this.velocity.z = 0;
                 },
                 scale: function() {
-                    this.scale.x = this.scale.y = this.scale.z = Math.random() * 4 + 6;
+                    this.scale = Math.random() * 20 + 20;
+                },
+                color: function() {
+                    this.color.r = 1;
+                    this.color.g = 1;
+                    this.color.b = 0;
                 }
             }
         };
 
         // create the particle emitter and add it to the scene
         ps = window.ps = new Emitter( {
-            position: new THREE.Vector3( 0, 0, 0 ),
+            position: new THREE.Vector3( 0, -100, 0 ),
             forces: new THREE.Vector3( 0, 0, 0 ),
             maxParticles: NUM_PARTICLES,
             extendParticle: pExt
@@ -91,35 +100,8 @@ define( function( require ) {
     // The render loop where most of the action happens
     function render() {
 
+        // render particle system
         ps.render();
-
-        // Rotate particles
-//        ps.system.rotation.y += 0.01;
-//        ps.system.rotation.x += 0.0045;
-//
-//        var pCount = NUM_PARTICLES;
-//        while ( pCount-- ) {
-//            var particle = ps.geometry.vertices[ pCount ];
-//
-//            // check for reset
-//            if ( particle.y < -200 ) {
-//                particle.y = 200;
-//                particle.velocity.y = 0;
-//                ps.geometry.colors[ pCount ].g = 1;
-//            }
-//
-//            // update velocity
-//            particle.velocity.y -= Math.random() * 0.1;
-//
-//            // update pos
-//            particle.add( particle.velocity );
-//
-//            // update colors
-//            ps.geometry.colors[ pCount ].g -= 0.01;     // loses the green to finish as red
-//
-//            // update the whole system
-//            ps.geometry.__dirtyVertices = true;
-//        }
 
         // update camera
         camera.position.add( camera.velocity );

@@ -31,7 +31,7 @@ define( function( require, exports, module ) {
 
         this.position = new THREE.Vector3( 0, 0, 0 );
         this.velocity = new THREE.Vector3( 0, 0, 0 );
-        this.scale = new THREE.Vector3( 1, 1, 1 );
+        this.scale = 10;
         this.color = new THREE.Color( 0xFFFFFF );
 
         this.initialExtensions = new Extension( extend.initialExtensions );
