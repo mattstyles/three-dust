@@ -1,6 +1,6 @@
 {
-  "name": "temp",
-  "version": "0.0.0",
+  "name": "three-dust",
+  "version": "0.0.1",
   "dependencies": {
     "threejs": "",
     "requirejs": "~2.1.9",
