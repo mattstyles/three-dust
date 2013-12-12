@@ -81,7 +81,7 @@ define( function( require ) {
                 velocity: function() {
                     this.velocity.x = ( Math.random() * 2 ) - 1;
                     this.velocity.y = ( Math.random() * 2 ) - 1;
-                    this.velocity.z = 0;
+                    this.velocity.z = Math.random() * 1;
                 },
                 scale: function() {
                     this.scale = Math.random() * 50 + 100;

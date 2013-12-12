@@ -1,0 +1,170 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Particle Generator</title>
+        <meta name="description" content="">
+        <!-- This assumes your project will be responsive -->
+        <meta name="viewport" content="width=device-width">
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        <link rel="stylesheet" href="css/main.css">
+
+        <!-- Shaders - should be added to the html as part of a build process -->
+        <script type="x-shader/x-vertex" id="vertexshader">
+
+				attribute float size;
+				attribute vec3 pcolor;
+				attribute float alpha;
+
+				varying vec4 vColor;
+
+				void main() {
+					vColor = vec4( pcolor, alpha );
+					vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+
+					gl_PointSize = size * ( 100.0 / length( mvPosition.xyz ) );
+					gl_Position = projectionMatrix * mvPosition;
+				}
+
+			</script>
+
+			<script type="x-shader/x-fragment" id="fragmentshader">
+
+				uniform sampler2D texture;
+
+				varying vec4 vColor;
+
+				void main() {
+					vec4 outColor = texture2D( texture, gl_PointCoord );
+
+					gl_FragColor = outColor * vColor;
+				}
+
+			</script>
+
+    </head>
+    <body>
+        <!--[if lt IE 10]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <script src="js/vendor/require.js"></script>
+        <script>
+            require.config({
+
+                baseUrl: 'js',
+
+                paths: {
+                    three: 'vendor/three',
+                    stats: 'vendor/stats.min'
+                },
+
+                shim: {
+                    'vendor/three': {
+                        exports: 'THREE'
+                    },
+                    'vendor/stats.min': {
+                        exports: 'Stats'
+                    }
+                }
+
+            });
+
+            // Require globals before other shizzle
+            require( [ 'three', 'stats' ], function( three, stats ) {
+                console.info( 'globals defined' );
+
+                // Fire into the main project function
+                require( [ 'require',
+                           'particles/emitter',
+                           'particles/particle' ], function( require ) {
+
+                    var Emitter = require( 'particles/emitter' ),
+                        Particle = require( 'particles/particle' );
+
+                    // Add Stats
+                    var stats = new Stats();
+                    stats.setMode( 0 );
+                    stats.domElement.style.position = 'absolute';
+                    stats.domElement.style.left = '0px';
+                    stats.domElement.style.top = '0px';
+                    document.body.appendChild( stats.domElement );
+
+                    // Setup
+                    var NUM_PARTICLES = 1000;
+
+                    var scene, renderer, camera;
+                    var ps;
+
+                    function createSystem() {
+
+                        ps = new Emitter();
+
+                    }
+
+                    function init() {
+
+                        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 10, 1000 );
+                        camera.position = new THREE.Vector3( 0, 0, 100 );
+
+                        scene = new THREE.Scene();
+
+                        createSystem();
+
+                        scene.add( ps.system );
+
+                        renderer = new THREE.WebGLRenderer( {
+                            alpha: true
+                        } );
+                        renderer.setSize( window.innerWidth, window.innerHeight );
+                        renderer.setClearColor( 0x000000, 0 );
+
+                        document.body.appendChild( renderer.domElement );
+
+                        registerEvents();
+
+                    }
+
+
+                    function render() {
+
+                        if ( ps ) {
+                            ps.render();
+                        }
+
+                        renderer.render( scene, camera );
+
+                        requestAnimationFrame( render );
+
+                        stats.update();
+
+                    }
+
+
+                    function registerEvents() {
+
+                        document.addEventListener( 'keydown', function( event ) {
+
+                            // Space
+                            if ( event.keyCode === 32 ) {
+                                // Do stuff
+                            }
+
+                        }, true );
+
+                    }
+
+
+                    // Fire it up
+                    init();
+                    render();
+
+                } );
+            } );
+        </script>
+    </body>
+</html>

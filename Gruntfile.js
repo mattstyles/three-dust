@@ -33,6 +33,21 @@ module.exports = function(grunt) {
                 }
             }
         },
+        copy: {
+            examples: {
+                files: [
+                    { expand: true,
+                      cwd: 'app',
+                      src: [
+                        'js/*/**',
+                        'css/**',
+                        'img/**'
+                      ],
+                      dest: 'examples/'
+                    }
+                ]
+            }
+        },
         jshint: {
             options: {
                 jshintrc: '.jshintrc',
@@ -77,5 +92,7 @@ module.exports = function(grunt) {
         ]);
     });
 
-    grunt.registerTask('default', ['newer:jshint', 'serve']);
+    grunt.registerTask( 'default', [ 'newer:jshint', 'serve' ] );
+
+    grunt.registerTask( 'examples', [ 'copy:examples' ] );
 };

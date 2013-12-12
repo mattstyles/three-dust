@@ -16,10 +16,14 @@ grunt
 ```
 
 ## Documentation
-_Coming Soon_
+It’s pretty simple to use, have a look at the examples.  Preset emitters are coming but for now you’re not restricted to an implementation, the functionality for _your_ particle system comes from the best person to give it functionality: __you__.
 
 ## Examples
-_Coming Soon_
+Have a look in the examples directory.  You’ll need to build the assets to make sure it’s all up to date, do so with:
+
+```shell
+grunt examples
+```
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
