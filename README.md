@@ -1,12 +1,39 @@
+# three-dust
+
+> Particle emitter for [THREEJS](http://threejs.org/)
+
+## Getting Started
+It’s not registered with bower or npm yet so only way is to clone this repo:
+
+```shell
+git clone git@github.com:mattstyles/three-dust.git
+```
+
+and run it:
+
+```shell
+grunt
+```
+
+## Documentation
+_Coming Soon_
+
+## Examples
+_Coming Soon_
+
+## Contributing
+In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
+
+_Also, please don't edit files in the "dist" subdirectory as they are generated via Grunt. You'll find source code in the "lib" subdirectory!_
+
+## Release History
+_None_
+
+## License
+Copyright (c) 2013 Matt Styles
+Licensed under the MIT license.
+
+## Notes
 Scaffolded with `yo threejs` but then changed a little to support additional modules and commonjs style, see `main.js`.
 
-
-This project looks to port pixi-dust over to threejs to see what differences have to be made and any speed boosts that happen.
-
-So it looks like threejs is quite a bit faster, and, crucially, looks more extensible in terms of using shaders to access the different particles (particularly the vertex shader).  At the moment it is a little hard to tell because the chunky bit in pixi was raising a filter for each element but that constraint should be able to be removed by creating shaders that reference the age of the particle.
-
-Using colors by using the vertexColors:true flag in the particle system geometry array does work but its a little strange to have the particles fairly self constrained but then their colour being dictated by a color array which is outside of their control.  There is a little hit on rendering performance here too.  Offload to the shaders should be the next move.
-
-Now using shaders to handle size and colour.
-
-Now handles alpha, perf still ok.  Can handle about 12k at around 60fps without too much trouble (non-optimised).
+It actually started out life as a port of [pixi-dust](https://github.com/mattstyles/pixi-dust) but has already outgrown it’s roots.

@@ -41,14 +41,6 @@ module.exports = function(grunt) {
             all: [ base + '/js/*.js',
                    base + '/js/particles/*.js' ]
         },
-        jsonlint: {
-            pkg: {
-                src: 'package.json'
-            },
-            bower: {
-                src: '{bower,bowercopy}.json'
-            }
-        },
         watch: {
             // Watch javascript files for linting
             js: {
@@ -85,5 +77,5 @@ module.exports = function(grunt) {
         ]);
     });
 
-    grunt.registerTask('default', ['newer:jsonlint', 'newer:jshint', 'serve']);
+    grunt.registerTask('default', ['newer:jshint', 'serve']);
 };
