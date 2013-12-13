@@ -77,6 +77,12 @@ define( function( require, exports, module ) {
         // __{float}__ __0...1__ The age of the particle, clamped to 0...1
         this.age = 0;
 
+        // __{Boolean}__ Is the particle currently active.
+        this.active = typeof extend.active === 'undefined' || ( extend.active && true );
+
+        // __{int}__ The particle id, used to reference its position in the particle buffer, it is allocated by the emitter and immutable.
+        this.id = 0;
+
         this.init();
     };
 
@@ -84,7 +90,11 @@ define( function( require, exports, module ) {
     // Fires any extension functions that should happen only once and then fires a reset.
     Particle.prototype.init = function() {
         this.initialExtensions.apply( this );
-        this.reset();
+        this.position.x = this.position.y = this.position.z = Number.POSITIVE_INFINITY;
+
+        if ( this.active ) {
+            this.reset();
+        }
     };
 
     // ### function reset()
@@ -96,6 +106,11 @@ define( function( require, exports, module ) {
     // ### function update()
     // Usually called every frame and is responsible for executing any particle logic.
     Particle.prototype.update = function() {
+        // Bail if inactive
+        if ( !this.active ) {
+            return;
+        }
+
         // Get age
         this.age = this.currentLife / this.maxLife;
 

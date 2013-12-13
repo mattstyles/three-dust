@@ -34,7 +34,6 @@ define( function( require, exports, module ) {
         return canvas;
     }
 
-
     // Constructor function
     var ParticleEmitter = function( extend ) {
 
@@ -45,12 +44,16 @@ define( function( require, exports, module ) {
         this.position = extend.position || new THREE.Vector3( 0, 0, 0 );
         this.forces = extend.forces || new THREE.Vector3( 0, 0, 0);
         this.maxParticles = extend.maxParticles || 10;
-        this.extendParticle = extend.extendParticle || null;
+        this.activeParticles = extend.activeParticles || this.maxParticles;
         this.particle = extend.particle || Particle;
+        this.extendParticle = extend.extendParticle || null;
+
+        this.system = null;     // Having the actual THREE particle system as a prop is pretty annoying as this object should BE a THREE particle system
+
         this.particles = [];
         this.geometry = new THREE.Geometry();
-        this.system = null;     // Having the actual THREE particle system as a prop is pretty annoying as this object should BE a THREE particle system
-        this.colors = [];
+        this.attributes = null;
+        this.uniforms = null;
 
         // Set this up
         this.init();
@@ -60,11 +63,44 @@ define( function( require, exports, module ) {
     ParticleEmitter.prototype.init = function() {
         var p;
 
-        // Create material for shader
+        var material = this.createMaterial();
+
+        var valueSize = this.attributes.size.value;
+        var valueColor = this.attributes.pcolor.value;
+        var valueAlpha = this.attributes.alpha.value;
+
+        var extension = this.extendParticle;
+
+        // Populate the particle buffer
+        for( var i = 0; i < this.maxParticles; i++ ) {
+            // If we've reached the active limit then create the particles inactive
+            if ( i >= this.activeParticles ) {
+                extension.active = false;
+            }
+
+            p = new this.particle( extension );
+            p.id = i;
+            this.particles[ i ] = p;
+            this.geometry
+                    .vertices
+                    .push( this.particles[ i ].position );
+
+            valueSize[ i ] = this.particles[ i ].scale || 10;
+            valueColor[ i ] = this.particles[ i ].color || new THREE.Color( 0xFFFFFF);
+            valueAlpha[ i ] = this.particles[ i ].alpha || 1.0;
+        }
+
+        this.system = new THREE.ParticleSystem( this.geometry, material );
+        this.system.position = this.position;
+//        this.system.sortParticles = true;
+    };
+
+    // Create material for shader
+    ParticleEmitter.prototype.createMaterial = function() {
         var texture = new THREE.Texture( generateSprite() );
         texture.needsUpdate = true;
 
-        this.attributes = window.attributes = {
+        this.attributes = {
             size:  { type: 'f', value: [] },
             pcolor: { type: 'c', value: [] },
             alpha: { type: 'f', value: [] }
@@ -86,26 +122,7 @@ define( function( require, exports, module ) {
             transparent: true
         });
 
-        var valueSize = this.attributes.size.value;
-        var valueColor = this.attributes.pcolor.value;
-        var valueAlpha = this.attributes.alpha.value;
-
-        for( var i = 0; i < this.maxParticles; i++ ) {
-            p = new this.particle( this.extendParticle );
-            this.geometry
-                    .vertices
-                    .push( p.position );
-
-            this.particles[ i ] = p;
-
-            valueSize[ i ] = this.particles[ i ].scale || 10;
-            valueColor[ i ] = this.particles[ i ].color || new THREE.Color( 0xFFFFFF);
-            valueAlpha[ i ] = this.particles[ i ].alpha || 1.0;
-        }
-
-        this.system = new THREE.ParticleSystem( this.geometry, shaderMaterial );
-        this.system.position = this.position;
-        this.system.sortParticles = true;
+        return shaderMaterial;
     };
 
     // Renders all those particles
