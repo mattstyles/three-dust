@@ -2,7 +2,8 @@
 define( function( require, exports, module ) {
     'use strict';
 
-    var Particle = require( 'particles/particle' );
+    var Particle = require( 'particles/particle' ),
+        doubleLL = require( 'utils/linked-list' ).doubleLL;
 
     // Creates a simple gradient circle
     function generateSprite() {
@@ -50,7 +51,7 @@ define( function( require, exports, module ) {
 
         this.system = null;     // Having the actual THREE particle system as a prop is pretty annoying as this object should BE a THREE particle system
 
-        this.particles = [];
+        this.particles = doubleLL;
         this.geometry = new THREE.Geometry();
         this.attributes = null;
         this.uniforms = null;
@@ -80,14 +81,14 @@ define( function( require, exports, module ) {
 
             p = new this.particle( extension );
             p.id = i;
-            this.particles[ i ] = p;
+            this.particles.push( p );
             this.geometry
                     .vertices
-                    .push( this.particles[ i ].position );
+                    .push( p.position );
 
-            valueSize[ i ] = this.particles[ i ].scale || 10;
-            valueColor[ i ] = this.particles[ i ].color || new THREE.Color( 0xFFFFFF);
-            valueAlpha[ i ] = this.particles[ i ].alpha || 1.0;
+            valueSize[ i ] = p.scale || 10;
+            valueColor[ i ] = p.color || new THREE.Color( 0xFFFFFF);
+            valueAlpha[ i ] = p.alpha || 1.0;
         }
 
         this.system = new THREE.ParticleSystem( this.geometry, material );
@@ -133,9 +134,9 @@ define( function( require, exports, module ) {
             particle.update();
             particle.applyForces( self.forces );
 
-            self.attributes.size.value[ i ] = self.particles[ i ].scale;
-            self.attributes.alpha.value[ i ] = self.particles[ i ].alpha;
-            self.attributes.pcolor.value[ i ] = self.particles[ i ].color;      // This isnt actually necessary
+            self.attributes.size.value[ particle.id ] = particle.scale;
+            self.attributes.alpha.value[ particle.id ] = particle.alpha;
+            self.attributes.pcolor.value[ particle.id ] = particle.color;      // This isnt actually necessary
         });
 
         this.system.geometry.verticesNeedUpdate = true;

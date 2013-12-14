@@ -24,7 +24,7 @@ define( function( require ) {
     document.body.appendChild( stats.domElement );
 
     // constants
-    var NUM_PARTICLES = 1000,
+    var NUM_PARTICLES = 20,
         CAM_MAX_SPEED = 10,
         CAM_ACCEL = 2,
         CAM_INERTIA = 0.1;
@@ -44,13 +44,13 @@ define( function( require ) {
         camera.position.z = 100;
         camera.velocity = new THREE.Vector3( 0,0,0 );
 
-        scene = new THREE.Scene();
+        scene = window.scene = new THREE.Scene();
 
         // particle extension functions
         var pExt = window.pExt = {
             initialExtensions: {
                 age: function() {
-                    this.maxLife = Math.random() * 60 + 60;
+                    this.maxLife = 200;
                 },
                 alpha: function() {
                     this.alpha = 1;
@@ -61,7 +61,7 @@ define( function( require ) {
                     this.position.add( this.velocity );
                 },
                 scale: function() {
-                    this.scale *= 0.99;
+//                    this.scale *= 0.99;
                 },
                 color: function() {
                     this.color.r = this.age;
@@ -69,19 +69,19 @@ define( function( require ) {
                     this.color.b = 0;
                 },
                 alpha: function() {
-                    this.alpha = 1 - this.age;
+//                    this.alpha = 1 - this.age;
                 }
             },
             resetExtensions: {
                 position: function() {
-                    this.position.x = Math.random() * 1.5 - 0.75;
-                    this.position.y = Math.random() * 1.5 - 0.75;
+                    this.position.x = Math.random() * 150 - 75;
+                    this.position.y = Math.random() * 150 - 75;
                     this.position.z = 0;
                 },
                 velocity: function() {
-                    this.velocity.x = ( Math.random() * 2 ) - 1;
-                    this.velocity.y = ( Math.random() * 2 ) - 1;
-                    this.velocity.z = Math.random() * 1;
+                    this.velocity.x = 0;
+                    this.velocity.y = 0;
+                    this.velocity.z = 0;
                 },
                 scale: function() {
                     this.scale = Math.random() * 50 + 100;
@@ -171,31 +171,37 @@ define( function( require ) {
 
         document.addEventListener( 'keydown', function( event ) {
             // Up arrow
-            if ( event.keyCode === 38 ) {
-                if ( camera.velocity.z > -CAM_MAX_SPEED ) {
-                    camera.velocity.z -= CAM_ACCEL;
+            if ( event.keyCode === 32 ) {
+                console.log( 'hit space' );
+                var p;
+                for ( var i = 0; i < 50; i++ ) {
+//                    ps.particles[i].position.x = 0;
+//                    ps.particles[i].position.y = 0;
+                    p = new ps.particle();
+                    ps.particles.push( p);
+                    ps.geometry.vertices.push( p.position );
+                    ps.attributes.alpha.value.push( 1 );
+                    ps.attributes.size.value.push( 200 );
+                    ps.attributes.pcolor.value.push( new THREE.Color( 1, 0, 1 ) );
                 }
             }
 
             // Down
             if ( event.keyCode === 40 ) {
-                if ( camera.velocity.z < CAM_MAX_SPEED ) {
-                    camera.velocity.z += CAM_ACCEL;
-                }
             }
 
             // space
-            if ( event.keyCode === 32 ) {
-                scene.remove( ps.system );
-                ps = window.ps = new Emitter( {
-                    position: new THREE.Vector3( Math.random() * 300 - 150, Math.random() * 300 - 150, 0 ),
-                    forces: new THREE.Vector3( Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1, 0 ),
-                    maxParticles: NUM_PARTICLES,
-                    particle: Particle,
-                    extendParticle: window.pExt
-                } );
-                scene.add( ps.system );
-            }
+//            if ( event.keyCode === 32 ) {
+//                scene.remove( ps.system );
+//                ps = window.ps = new Emitter( {
+//                    position: new THREE.Vector3( Math.random() * 300 - 150, Math.random() * 300 - 150, 0 ),
+//                    forces: new THREE.Vector3( Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1, 0 ),
+//                    maxParticles: NUM_PARTICLES,
+//                    particle: Particle,
+//                    extendParticle: window.pExt
+//                } );
+//                scene.add( ps.system );
+//            }
         }, true );
 
     }
